@@ -76,8 +76,22 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    if (connectionString != null && (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://") || connectionString.Contains("Host=")))
+    {
+        // Handle postgresql:// URI format by converting it to Npgsql format if needed, 
+        // but modern Npgsql can often handle it if passed correctly or if we parse it.
+        // For simplicity, we'll assume standard Npgsql string or a provided helper.
+        options.UseNpgsql(connectionString);
+    }
+    else
+    {
+        options.UseSqlServer(connectionString);
+    }
+});
 var app = builder.Build();
 
 // Configure middleware
