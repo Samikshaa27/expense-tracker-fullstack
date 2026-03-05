@@ -16,10 +16,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReact",
         policy =>
         {
-            policy.WithOrigins(
-                    "http://localhost:3000",
-                    "http://192.168.1.7:3000"   // allow phones on the same Wi-Fi
-                )
+            policy.AllowAnyOrigin() // For production, you'd typically restrict this to your actual domain
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });

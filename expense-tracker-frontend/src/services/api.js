@@ -1,9 +1,8 @@
 import axios from "axios";
 
-// Use LAN IP so phones on the same Wi-Fi can reach the backend.
-// Change this back to "http://localhost:5269/api" if only using on desktop.
+// Use environment variable for the API URL, falling back to local IP for dev convenience
 const API = axios.create({
-    baseURL: "http://192.168.1.7:5269/api"
+    baseURL: process.env.REACT_APP_API_URL || "http://192.168.1.7:5269/api"
 });
 
 // LOGIN
