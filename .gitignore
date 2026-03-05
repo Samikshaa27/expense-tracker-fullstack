@@ -1,0 +1,62 @@
+# ─────────────────────────────────────────────────────────────
+#  .gitignore for Expense Tracker Full Stack
+#  (ASP.NET Core + React/Node)
+# ─────────────────────────────────────────────────────────────
+
+# ── .NET / ASP.NET Core ──────────────────────────────────────
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.swp
+*.sln.docstates
+project.lock.json
+project.fragment.lock.json
+artifacts/
+**/Properties/launchSettings.json
+
+# Secrets / sensitive config (keep appsettings.json but not local overrides)
+appsettings.Development.json
+appsettings.Local.json
+**/secrets.json
+
+# Publish output
+publish/
+PublishProfiles/
+
+# ── Node / React ─────────────────────────────────────────────
+node_modules/
+build/
+.cache/
+*.tgz
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp
+.pnp.js
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ── IDE / OS ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.orig
+*.rej
+*.bak
+*.tmp
+
+# JetBrains
+.idea/
+*.iml
+
+# VS Code (keep settings if useful)
+# .vscode/
+
+# ─────────────────────────────────────────────────────────────
