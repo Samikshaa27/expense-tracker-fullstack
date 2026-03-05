@@ -17,6 +17,7 @@ artifacts/
 **/Properties/launchSettings.json
 
 # Secrets / sensitive config (keep appsettings.json but not local overrides)
+appsettings.Production.json
 appsettings.Development.json
 appsettings.Local.json
 **/secrets.json
