@@ -99,14 +99,15 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Essential for production
-app.UseHttpsRedirection();
-
 // CORS must be called BEFORE Authentication/Authorization
 app.UseCors("AllowReact");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Simple health check endpoint
+app.MapGet("/", () => "Expense Tracker API is running!");
+
 app.MapControllers();
 
 app.Run();
