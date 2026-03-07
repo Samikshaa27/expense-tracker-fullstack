@@ -100,10 +100,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         }
         options.UseNpgsql(formattedConnString);
     }
-    else
-    {
-        options.UseSqlServer(connectionString ?? "Server=(localdb)\\mssqllocaldb;Database=ExpenseTrackerDB;Trusted_Connection=True;");
-    }
+   
 });
 var app = builder.Build();
 
@@ -123,8 +120,21 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Ensure CORS is the very first thing in the pipeline for all requests
-app.UseCors("AllowFrontend");
+// 1. CUSTOM CORS MIDDLEWARE (Handles OPTIONS preflight and sets headers manually)
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["Access-Control-Allow-Origin"] = "https://expense-tracker-fullstack-ten.vercel.app";
+    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
+
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = 200;
+        return;
+    }
+
+    await next();
+});
 
 app.UseRouting();
 
