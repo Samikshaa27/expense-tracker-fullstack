@@ -1,9 +1,14 @@
 import axios from "axios";
 
-const rawBaseURL = process.env.REACT_APP_API_URL || "http://192.168.1.7:5269/api";
-const finalBaseURL = rawBaseURL.endsWith("/") ? rawBaseURL : `${rawBaseURL}/`;
+let rawBaseURL = process.env.REACT_APP_API_URL || "http://192.168.1.7:5269/api";
 
-console.log("🚀 API Base URL:", finalBaseURL);
+// Auto-fix missing protocol (must start with http or https)
+if (rawBaseURL && !rawBaseURL.startsWith("http")) {
+    rawBaseURL = `https://${rawBaseURL}`;
+}
+
+const finalBaseURL = rawBaseURL.endsWith("/") ? rawBaseURL : `${rawBaseURL}/`;
+console.log("🚀 FINAL API Base URL:", finalBaseURL);
 
 const API = axios.create({
     baseURL: finalBaseURL
