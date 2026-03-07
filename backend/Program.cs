@@ -16,9 +16,21 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.SetIsOriginAllowed(origin => new Uri(origin).Host.EndsWith("vercel.app"))
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.SetIsOriginAllowed(origin =>
+        {
+            if (string.IsNullOrEmpty(origin)) return false;
+
+            // Allow production URL
+            if (origin == "https://expense-tracker-fullstack-ten.vercel.app") return true;
+
+            // Allow all Vercel preview deployment URLs for this project
+            if (origin.StartsWith("https://expense-tracker-fullstack") && origin.EndsWith(".vercel.app")) return true;
+
+            return false;
+        })
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
@@ -89,9 +101,9 @@ if (!string.IsNullOrEmpty(databaseUrl))
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    if (connectionString != null && 
-        (connectionString.StartsWith("postgres://") || 
-         connectionString.StartsWith("postgresql://") || 
+    if (connectionString != null &&
+        (connectionString.StartsWith("postgres://") ||
+         connectionString.StartsWith("postgresql://") ||
          connectionString.Contains("Host=")))
     {
         var formattedConnString = connectionString;
@@ -134,7 +146,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseRouting();
 
-// Enable CORS
+// Enable CORS — must be before Authentication/Authorization
 app.UseCors("AllowFrontend");
 
 // Request logging
