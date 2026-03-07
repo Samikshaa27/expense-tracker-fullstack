@@ -1,0 +1,11 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Users\ADMIN\expense-tracker-fullstack\ExpenseTrackerAPI\Migrations\Migrations\AppDbContextModelSnapshot.cs(16,33): error CS0111: Type 'AppDbContextModelSnapshot' already defines a member called 'BuildModel' with the same parameter types [C:\Users\ADMIN\expense-tracker-fullstack\ExpenseTrackerAPI\ExpenseTrackerAPI.csproj]
+
+Build FAILED.
+
+C:\Users\ADMIN\expense-tracker-fullstack\ExpenseTrackerAPI\Migrations\Migrations\AppDbContextModelSnapshot.cs(16,33): error CS0111: Type 'AppDbContextModelSnapshot' already defines a member called 'BuildModel' with the same parameter types [C:\Users\ADMIN\expense-tracker-fullstack\ExpenseTrackerAPI\ExpenseTrackerAPI.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:03.76

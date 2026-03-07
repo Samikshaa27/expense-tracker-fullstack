@@ -58,3 +58,15 @@ export const getCategorySummary = (token) =>
     API.get("/Expense/category-summary", {
         headers: { Authorization: `Bearer ${token}` }
     });
+
+// AI FINANCIAL COACH
+export const getFinancialCoach = (token) =>
+    API.get("/ai/financial-coach", {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+// AI CHATBOT
+export const askChatbot = (message, token) =>
+    API.post("/ai/chat", { message }, {
+        headers: { Authorization: `Bearer ${token}` }
+    });

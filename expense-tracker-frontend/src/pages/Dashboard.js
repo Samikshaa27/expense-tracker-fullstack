@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { getDashboard } from "../services/api";
+import { getDashboard, getFinancialCoach } from "../services/api";
 import AddExpense from "../components/AddExpense";
 import ExpenseList from "../components/ExpenseList";
 import Analytics from "../components/Analytics";
+import Chatbot from "../components/Chatbot";
 
 /* ── Design tokens ── */
 const G = {
@@ -74,6 +75,7 @@ const PAGE_TITLES = {
     analytics: "Analytics",
     add: "Add Expense",
     list: "All Expenses",
+    chat: "AI Chatbot",
 };
 
 /* ═══════════════════════════════════════════════════════════════════ */
@@ -83,6 +85,8 @@ function Dashboard() {
     const [activeTab, setActiveTab] = useState("overview");
     const [refreshKey, setRefreshKey] = useState(0);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [advice, setAdvice] = useState("");
+    const [loadingAdvice, setLoadingAdvice] = useState(false);
 
     /* Fetch summary */
     const fetchSummary = useCallback(async () => {
@@ -90,7 +94,15 @@ function Dashboard() {
         try {
             const res = await getDashboard(token);
             setSummary(res.data);
-        } catch (e) { console.error(e); }
+
+            setLoadingAdvice(true);
+            const aiRes = await getFinancialCoach(token);
+            setAdvice(aiRes.data.advice);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoadingAdvice(false);
+        }
     }, []);
 
     useEffect(() => { fetchSummary(); }, [fetchSummary, refreshKey]);
@@ -128,6 +140,7 @@ function Dashboard() {
             <SidebarItem icon="📈" label="Analytics" active={activeTab === "analytics"} onClick={() => goTab("analytics")} />
             <SidebarItem icon="➕" label="Add Expense" active={activeTab === "add"} onClick={() => goTab("add")} />
             <SidebarItem icon="📋" label="All Expenses" active={activeTab === "list"} onClick={() => goTab("list")} />
+            <SidebarItem icon="💬" label="AI Chatbot" active={activeTab === "chat"} onClick={() => goTab("chat")} />
 
             <div style={{ flex: 1 }} />
 
@@ -251,8 +264,24 @@ function Dashboard() {
                                 <StatCard icon="🏷️" label="Top Category" value={summary.topCategory || "—"} bgColor="#E8EAF6" />
                             </div>
 
+                            {/* AI Financial Coach */}
+                            <div style={{ marginTop: "24px", background: "#399B48", borderRadius: "16px", padding: "24px", border: `1px solid ${G.border}`, boxShadow: shadow }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+                                    <div style={{ fontSize: "24px", background: "rgba(255,255,255,0.2)", width: "42px", height: "42px", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>💡</div>
+                                    <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.25rem", margin: 0, fontWeight: "800", color: "#FFFFFF" }}>AI Financial Coach</h3>
+                                </div>
+                                {loadingAdvice ? (
+                                    <p style={{ opacity: 0.8, fontStyle: "italic", margin: 0, color: "rgba(255,255,255,0.8)" }}>Analyzing your spending patterns...</p>
+                                ) : (
+                                    <p
+                                        style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.6", color: "#FFFFFF", whiteSpace: "pre-wrap" }}
+                                        dangerouslySetInnerHTML={{ __html: advice ? advice.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #FFFFFF; font-weight: 800;">$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>') : "Not enough data yet." }}
+                                    />
+                                )}
+                            </div>
+
                             {/* Add form + recent expenses */}
-                            <div className="overview-grid">
+                            <div className="overview-grid" style={{ marginTop: "24px" }}>
                                 <div className="dash-card" style={{ background: G.card, borderRadius: "16px", boxShadow: shadow, padding: "28px", border: `1px solid ${G.border}` }}>
                                     <AddExpense onSuccess={handleExpenseAdded} />
                                 </div>
@@ -297,6 +326,13 @@ function Dashboard() {
                     {activeTab === "list" && (
                         <div className="dash-card" style={{ background: G.card, borderRadius: "16px", boxShadow: shadow, padding: "28px", border: `1px solid ${G.border}` }}>
                             <ExpenseList key={refreshKey} />
+                        </div>
+                    )}
+
+                    {/* ════  AI CHATBOT  ════ */}
+                    {activeTab === "chat" && (
+                        <div className="dash-card" style={{ background: "transparent", height: "calc(100vh - 120px)" }}>
+                            <Chatbot height="100%" />
                         </div>
                     )}
                 </main>
