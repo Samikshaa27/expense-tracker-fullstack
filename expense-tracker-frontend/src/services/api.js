@@ -7,11 +7,11 @@ const API = axios.create({
 
 // LOGIN
 export const loginUser = (data) =>
-    API.post("/Auth/login", data);
+    API.post("Auth/login", data);
 
 // REGISTER
 export const registerUser = (data) =>
-    API.post("/Auth/register", data);
+    API.post("Auth/register", data);
 
 // GET EXPENSES (with optional date filter & pagination)
 export const getExpenses = (token, { startDate, endDate, page = 1, pageSize = 50 } = {}) => {
@@ -21,7 +21,7 @@ export const getExpenses = (token, { startDate, endDate, page = 1, pageSize = 50
     params.page = page;
     params.pageSize = pageSize;
 
-    return API.get("/Expense", {
+    return API.get("Expense", {
         headers: { Authorization: `Bearer ${token}` },
         params
     });
@@ -29,13 +29,13 @@ export const getExpenses = (token, { startDate, endDate, page = 1, pageSize = 50
 
 // DELETE EXPENSE
 export const deleteExpense = (id, token) =>
-    API.delete(`/Expense/${id}`, {
+    API.delete(`Expense/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
 
 // ADD EXPENSE
 export const addExpense = (data, token) =>
-    API.post("/Expense", data, {
+    API.post("Expense", data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -43,30 +43,30 @@ export const addExpense = (data, token) =>
 
 // DASHBOARD SUMMARY  { totalExpenses, totalTransactions, topCategory }
 export const getDashboard = (token) =>
-    API.get("/Expense/dashboard", {
+    API.get("Expense/dashboard", {
         headers: { Authorization: `Bearer ${token}` }
     });
 
 // SUMMARY  { totalExpenses, totalTransactions }
 export const getSummary = (token) =>
-    API.get("/Expense/summary", {
+    API.get("Expense/summary", {
         headers: { Authorization: `Bearer ${token}` }
     });
 
 // CATEGORY SUMMARY  [{ category, total }]
 export const getCategorySummary = (token) =>
-    API.get("/Expense/category-summary", {
+    API.get("Expense/category-summary", {
         headers: { Authorization: `Bearer ${token}` }
     });
 
 // AI FINANCIAL COACH
 export const getFinancialCoach = (token) =>
-    API.get("/ai/financial-coach", {
+    API.get("ai/financial-coach", {
         headers: { Authorization: `Bearer ${token}` }
     });
 
 // AI CHATBOT
 export const askChatbot = (message, token) =>
-    API.post("/ai/chat", { message }, {
+    API.post("ai/chat", { message }, {
         headers: { Authorization: `Bearer ${token}` }
     });
