@@ -1,9 +1,12 @@
 import axios from "axios";
 
-// Get the URL from env, and make sure it doesn't have a double slash or missing slash at the end
 const rawBaseURL = process.env.REACT_APP_API_URL || "http://192.168.1.7:5269/api";
+const finalBaseURL = rawBaseURL.endsWith("/") ? rawBaseURL : `${rawBaseURL}/`;
+
+console.log("🚀 API Base URL:", finalBaseURL);
+
 const API = axios.create({
-    baseURL: rawBaseURL.endsWith("/") ? rawBaseURL : `${rawBaseURL}/`
+    baseURL: finalBaseURL
 });
 
 // LOGIN
