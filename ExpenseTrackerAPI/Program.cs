@@ -94,26 +94,24 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 var app = builder.Build();
 
-// Configure middleware
-app.UseSwagger();
-app.UseSwaggerUI();
+// 1. CORS MUST BE FIRST (before anything else)
+app.UseCors("AllowReact");
 
-// Essential for production
+// 2. Logging
 app.Use(async (context, next) =>
 {
     Console.WriteLine($"Incoming {context.Request.Method} request: {context.Request.Path}");
     await next();
 });
 
-// CORS must be called BEFORE Authentication/Authorization
-app.UseCors("AllowReact");
+// 3. Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Simple health check endpoint
 app.MapGet("/", () => "Expense Tracker API is running!");
-
 app.MapControllers();
 
 app.Run();
