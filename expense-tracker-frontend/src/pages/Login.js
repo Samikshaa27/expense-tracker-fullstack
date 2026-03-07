@@ -129,7 +129,7 @@ function Login() {
         } catch (err) {
             if (!err.response) {
                 // Network error – backend is down, wrong port, or CORS
-                setError("Cannot reach the server. Make sure the backend is running and you are on the same Wi-Fi (http://192.168.1.7:5269).");
+                setError("Cannot reach the server. Please check your internet connection and verify the backend is running.");
             } else if (err.response.status === 401 || err.response.status === 400) {
                 setError("Invalid email or password. Please try again.");
             } else {
