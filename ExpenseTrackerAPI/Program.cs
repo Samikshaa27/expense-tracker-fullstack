@@ -16,14 +16,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.SetIsOriginAllowed(origin => 
-        {
-            var uri = new Uri(origin);
-            return uri.Host == "expense-tracker-fullstack-ten.vercel.app" || 
-                   uri.Host == "localhost";
-        })
-        .AllowAnyHeader()
-        .AllowAnyMethod();
+        policy.WithOrigins("https://expense-tracker-fullstack-ten.vercel.app")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Often needed for specific origins
     });
 });
 
@@ -83,18 +79,31 @@ builder.Services.AddAuthentication(options =>
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+// Check Railway's default DATABASE_URL environment variable if standard config is missing or has placeholders
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    connectionString = databaseUrl;
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     if (connectionString != null && (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://") || connectionString.Contains("Host=")))
     {
-        // Handle postgresql:// URI format by converting it to Npgsql format if needed, 
-        // but modern Npgsql can often handle it if passed correctly or if we parse it.
-        // For simplicity, we'll assume standard Npgsql string or a provided helper.
-        options.UseNpgsql(connectionString);
+        // Handle postgresql:// URI format
+        var formattedConnString = connectionString;
+        if (formattedConnString.StartsWith("postgres://") || formattedConnString.StartsWith("postgresql://"))
+        {
+            // Simple converter for postgres:// URI to Npgsql connection string
+            var uri = new Uri(formattedConnString);
+            var userInfo = uri.UserInfo.Split(':');
+            formattedConnString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SslMode=Require;Trust Server Certificate=true;";
+        }
+        options.UseNpgsql(formattedConnString);
     }
     else
     {
-        options.UseSqlServer(connectionString);
+        options.UseSqlServer(connectionString ?? "Server=(localdb)\\mssqllocaldb;Database=ExpenseTrackerDB;Trusted_Connection=True;");
     }
 });
 var app = builder.Build();
