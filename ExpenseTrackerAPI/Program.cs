@@ -99,6 +99,13 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+// Essential for production
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Incoming {context.Request.Method} request: {context.Request.Path}");
+    await next();
+});
+
 // CORS must be called BEFORE Authentication/Authorization
 app.UseCors("AllowReact");
 
