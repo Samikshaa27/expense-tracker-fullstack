@@ -16,10 +16,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.SetIsOriginAllowed(origin => true) // Allow any origin including Vercel
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // Support cookies/auth if needed
+              .AllowAnyMethod();
     });
 });
 
