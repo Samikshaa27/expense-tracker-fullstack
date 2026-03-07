@@ -1,5 +1,3 @@
-
-
 using ExpenseTrackerAPI.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
+
+// CORS configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://expense-tracker-fullstack-ten.vercel.app")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -26,24 +26,24 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        In = ParameterLocation.Header,
         Description = "Enter: Bearer {your JWT token}"
     });
 
-    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            new OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                Reference = new OpenApiReference
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
             },
@@ -52,6 +52,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
@@ -76,9 +77,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Database connection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Check Railway's default DATABASE_URL environment variable if standard config is missing or has placeholders
+// Railway environment variable support
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 if (!string.IsNullOrEmpty(databaseUrl))
 {
@@ -87,24 +89,34 @@ if (!string.IsNullOrEmpty(databaseUrl))
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    if (connectionString != null && (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://") || connectionString.Contains("Host=")))
+    if (connectionString != null && 
+        (connectionString.StartsWith("postgres://") || 
+         connectionString.StartsWith("postgresql://") || 
+         connectionString.Contains("Host=")))
     {
-        // Handle postgresql:// URI format
         var formattedConnString = connectionString;
+
         if (formattedConnString.StartsWith("postgres://") || formattedConnString.StartsWith("postgresql://"))
         {
-            // Simple converter for postgres:// URI to Npgsql connection string
             var uri = new Uri(formattedConnString);
             var userInfo = uri.UserInfo.Split(':');
-            formattedConnString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SslMode=Require;Trust Server Certificate=true;";
+
+            formattedConnString =
+                $"Host={uri.Host};" +
+                $"Port={uri.Port};" +
+                $"Database={uri.AbsolutePath.TrimStart('/')};" +
+                $"Username={userInfo[0]};" +
+                $"Password={userInfo[1]};" +
+                $"SslMode=Require;Trust Server Certificate=true;";
         }
+
         options.UseNpgsql(formattedConnString);
     }
-   
 });
+
 var app = builder.Build();
 
-// AUTOMATICALLY CREATE DATABASE TABLES ON STARTUP
+// Automatically apply migrations
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -112,47 +124,36 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
         context.Database.Migrate();
-        Console.WriteLine("✅ Database shifted/migrated successfully.");
+        Console.WriteLine("✅ Database migrated successfully.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"❌ An error occurred while migrating the database: {ex.Message}");
+        Console.WriteLine($"❌ Migration error: {ex.Message}");
     }
 }
 
-// 1. CUSTOM CORS MIDDLEWARE (Handles OPTIONS preflight and sets headers manually)
-app.Use(async (context, next) =>
-{
-    context.Response.Headers["Access-Control-Allow-Origin"] = "https://expense-tracker-fullstack-ten.vercel.app";
-    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-    context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
-
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.StatusCode = 200;
-        return;
-    }
-
-    await next();
-});
-
 app.UseRouting();
 
-// 2. Logging
+// Enable CORS
+app.UseCors("AllowFrontend");
+
+// Request logging
 app.Use(async (context, next) =>
 {
     Console.WriteLine($"Incoming {context.Request.Method} request: {context.Request.Path}");
     await next();
 });
 
-// 3. Swagger
+// Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Health check endpoint
 app.MapGet("/", () => "Expense Tracker API is running!");
+
 app.MapControllers();
 
 app.Run();
