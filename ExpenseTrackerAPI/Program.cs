@@ -18,8 +18,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("https://expense-tracker-fullstack-ten.vercel.app")
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // Often needed for specific origins
+              .AllowAnyMethod();
     });
 });
 
