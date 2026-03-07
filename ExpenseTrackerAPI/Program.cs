@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("https://expense-tracker-fullstack-ten.vercel.app")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -123,10 +123,10 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseRouting();
-
-// 1. CORS MUST BE after UseRouting but before Authorization
+// Ensure CORS is the very first thing in the pipeline for all requests
 app.UseCors("AllowFrontend");
+
+app.UseRouting();
 
 // 2. Logging
 app.Use(async (context, next) =>
