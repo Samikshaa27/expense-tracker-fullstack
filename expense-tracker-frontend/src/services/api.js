@@ -7,8 +7,9 @@ if (rawBaseURL && !rawBaseURL.startsWith("http")) {
     rawBaseURL = `https://${rawBaseURL}`;
 }
 
-const finalBaseURL = rawBaseURL.endsWith("/") ? rawBaseURL : `${rawBaseURL}/`;
-console.log("🚀 FINAL API Base URL:", finalBaseURL);
+// Clean the URL: strip any trailing slashes to prevent double-slash errors
+const finalBaseURL = rawBaseURL.replace(/\/+$/, "");
+console.log("🚀 FINAL API Base URL (Clean):", finalBaseURL);
 
 const API = axios.create({
     baseURL: finalBaseURL
@@ -16,11 +17,11 @@ const API = axios.create({
 
 // LOGIN
 export const loginUser = (data) =>
-    API.post("Auth/login", data);
+    API.post("/Auth/login", data);
 
 // REGISTER
 export const registerUser = (data) =>
-    API.post("Auth/register", data);
+    API.post("/Auth/register", data);
 
 // GET EXPENSES (with optional date filter & pagination)
 export const getExpenses = (token, { startDate, endDate, page = 1, pageSize = 50 } = {}) => {
@@ -30,7 +31,7 @@ export const getExpenses = (token, { startDate, endDate, page = 1, pageSize = 50
     params.page = page;
     params.pageSize = pageSize;
 
-    return API.get("Expense", {
+    return API.get("/Expense", {
         headers: { Authorization: `Bearer ${token}` },
         params
     });
@@ -38,13 +39,13 @@ export const getExpenses = (token, { startDate, endDate, page = 1, pageSize = 50
 
 // DELETE EXPENSE
 export const deleteExpense = (id, token) =>
-    API.delete(`Expense/${id}`, {
+    API.delete(`/Expense/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
 
 // ADD EXPENSE
 export const addExpense = (data, token) =>
-    API.post("Expense", data, {
+    API.post("/Expense", data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -52,7 +53,7 @@ export const addExpense = (data, token) =>
 
 // DASHBOARD SUMMARY  { totalExpenses, totalTransactions, topCategory }
 export const getDashboard = (token) =>
-    API.get("Expense/dashboard", {
+    API.get("/Expense/dashboard", {
         headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -64,7 +65,7 @@ export const getSummary = (token) =>
 
 // CATEGORY SUMMARY  [{ category, total }]
 export const getCategorySummary = (token) =>
-    API.get("Expense/category-summary", {
+    API.get("/Expense/category-summary", {
         headers: { Authorization: `Bearer ${token}` }
     });
 
