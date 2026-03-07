@@ -1,8 +1,9 @@
 import axios from "axios";
 
-// Use environment variable for the API URL, falling back to local IP for dev convenience
+// Get the URL from env, and make sure it doesn't have a double slash or missing slash at the end
+const rawBaseURL = process.env.REACT_APP_API_URL || "http://192.168.1.7:5269/api";
 const API = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || "http://192.168.1.7:5269/api"
+    baseURL: rawBaseURL.endsWith("/") ? rawBaseURL : `${rawBaseURL}/`
 });
 
 // LOGIN
