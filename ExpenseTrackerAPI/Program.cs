@@ -14,13 +14,12 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReact",
-        policy =>
-        {
-            policy.AllowAnyOrigin() // For production, you'd typically restrict this to your actual domain
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowReact", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
 // Add Swagger
