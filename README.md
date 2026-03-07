@@ -52,7 +52,7 @@ Users can **register**, **log in securely** using JWT authentication, **add expe
 ```
 expense-tracker-fullstack/
 │
-├── ExpenseTrackerAPI/              ← Backend (ASP.NET Core API)
+├── backend/                        ← Backend (ASP.NET Core API)
 │   ├── Controllers/                ← API endpoints
 │   ├── DTOs/                       ← Data Transfer Objects
 │   ├── Data/                       ← DbContext
@@ -63,7 +63,7 @@ expense-tracker-fullstack/
 │   ├── Program.cs                  ← App entry point
 │   └── appsettings.json            ← Configuration (update Key before running)
 │
-└── expense-tracker-frontend/       ← Frontend (React)
+└── frontend/                       ← Frontend (React)
     ├── public/                     ← Static assets
     └── src/
         ├── components/             ← Reusable UI components
@@ -87,7 +87,7 @@ expense-tracker-fullstack/
 
 ```bash
 # 1. Navigate to the backend folder
-cd ExpenseTrackerAPI
+cd backend
 
 # 2. Restore NuGet packages
 dotnet restore
@@ -109,7 +109,7 @@ The API will start at `http://localhost:5269` by default.
 
 ```bash
 # 1. Navigate to the frontend folder
-cd expense-tracker-frontend
+cd frontend
 
 # 2. Install Node modules
 npm install
