@@ -1,6 +1,6 @@
 import axios from "axios";
 
-let rawBaseURL = process.env.REACT_APP_API_URL || "https://expense-tracker-fullstack-production.up.railway.app/api";
+let rawBaseURL = process.env.REACT_APP_API_URL || "https://expense-tracker-fullstack-production-d71e.up.railway.app/api";
 
 // Auto-fix missing protocol (must start with http or https)
 if (rawBaseURL && !rawBaseURL.startsWith("http")) {

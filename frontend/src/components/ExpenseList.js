@@ -88,7 +88,7 @@ function ExpenseList({ compact }) {
         } catch (err) {
             console.error("[ExpenseList] Fetch error:", err);
             if (!err.response) {
-                setErrorMsg("Cannot reach the server. Ensure the backend is running on http://localhost:5269.");
+                setErrorMsg("Cannot reach the server. Please check your connection or verify if the backend is live.");
             } else {
                 setErrorMsg(`Failed to load expenses (${err.response.status}). Check console for details.`);
             }
