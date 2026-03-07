@@ -95,6 +95,22 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 var app = builder.Build();
 
+// AUTOMATICALLY CREATE DATABASE TABLES ON STARTUP
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        context.Database.Migrate();
+        Console.WriteLine("✅ Database shifted/migrated successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ An error occurred while migrating the database: {ex.Message}");
+    }
+}
+
 // 1. CORS MUST BE FIRST (before anything else)
 app.UseCors("AllowReact");
 
