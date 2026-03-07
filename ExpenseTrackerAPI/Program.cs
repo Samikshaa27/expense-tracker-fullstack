@@ -14,9 +14,9 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReact", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://expense-tracker-fullstack-ten.vercel.app")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -111,7 +111,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // 1. CORS MUST BE FIRST (before anything else)
-app.UseCors("AllowReact");
+app.UseCors("AllowFrontend");
 
 // 2. Logging
 app.Use(async (context, next) =>
