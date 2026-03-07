@@ -15,7 +15,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/out .
 
-# Expose port and start app
-ENV ASPNETCORE_URLS=http://+:5269
-EXPOSE 5269
+# Start app with dynamic port mapping
+ENV ASPNETCORE_URLS=http://*:${PORT:-5269}
 ENTRYPOINT ["dotnet", "ExpenseTrackerAPI.dll"]
