@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("https://expense-tracker-fullstack-ten.vercel.app")
+        policy.SetIsOriginAllowed(origin => new Uri(origin).Host.EndsWith("vercel.app"))
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
