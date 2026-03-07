@@ -9,7 +9,7 @@ using System.Security.Claims;
 namespace ExpenseTrackerAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/Expenses")]
     [Authorize]
     public class ExpenseController : ControllerBase
     {

@@ -23,7 +23,7 @@ export async function loginUser(data) {
 }
 
 export async function getExpenses(token) {
-    const response = await fetch(`${API_BASE_URL}/Expense`, {
+    const response = await fetch(`${API_BASE_URL}/Expenses`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`

@@ -31,7 +31,7 @@ export const getExpenses = (token, { startDate, endDate, page = 1, pageSize = 50
     params.page = page;
     params.pageSize = pageSize;
 
-    return API.get("/Expense", {
+    return API.get("/Expenses", {
         headers: { Authorization: `Bearer ${token}` },
         params
     });
@@ -39,13 +39,13 @@ export const getExpenses = (token, { startDate, endDate, page = 1, pageSize = 50
 
 // DELETE EXPENSE
 export const deleteExpense = (id, token) =>
-    API.delete(`/Expense/${id}`, {
+    API.delete(`/Expenses/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
 
 // ADD EXPENSE
 export const addExpense = (data, token) =>
-    API.post("/Expense", data, {
+    API.post("/Expenses", data, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -53,19 +53,19 @@ export const addExpense = (data, token) =>
 
 // DASHBOARD SUMMARY  { totalExpenses, totalTransactions, topCategory }
 export const getDashboard = (token) =>
-    API.get("/Expense/dashboard", {
+    API.get("/Expenses/dashboard", {
         headers: { Authorization: `Bearer ${token}` }
     });
 
 // SUMMARY  { totalExpenses, totalTransactions }
 export const getSummary = (token) =>
-    API.get("Expense/summary", {
+    API.get("Expenses/summary", {
         headers: { Authorization: `Bearer ${token}` }
     });
 
 // CATEGORY SUMMARY  [{ category, total }]
 export const getCategorySummary = (token) =>
-    API.get("/Expense/category-summary", {
+    API.get("/Expenses/category-summary", {
         headers: { Authorization: `Bearer ${token}` }
     });
 
