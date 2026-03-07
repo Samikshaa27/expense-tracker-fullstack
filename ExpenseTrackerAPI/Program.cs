@@ -16,9 +16,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("https://expense-tracker-fullstack-ten.vercel.app")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.SetIsOriginAllowed(origin => 
+        {
+            var uri = new Uri(origin);
+            return uri.Host == "expense-tracker-fullstack-ten.vercel.app" || 
+                   uri.Host == "localhost";
+        })
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
 
@@ -110,7 +115,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// 1. CORS MUST BE FIRST (before anything else)
+app.UseRouting();
+
+// 1. CORS MUST BE after UseRouting but before Authorization
 app.UseCors("AllowFrontend");
 
 // 2. Logging
