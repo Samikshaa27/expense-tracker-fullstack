@@ -98,9 +98,13 @@ var app = builder.Build();
 // Configure middleware
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// Essential for production
+app.UseHttpsRedirection();
+
+// CORS must be called BEFORE Authentication/Authorization
 app.UseCors("AllowReact");
 
-//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
