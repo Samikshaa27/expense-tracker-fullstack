@@ -23,10 +23,10 @@ namespace ExpenseTrackerAPI.Controllers
         {
             _context = context;
             _httpClient = httpClient;
-            // Check config first, then various environment variable names
-            _openAiApiKey = configuration["OpenAI:ApiKey"] 
-                            ?? Environment.GetEnvironmentVariable("GEMINI_API_KEY") 
+            // Prioritize environment variables for production flexibility
+            _openAiApiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY") 
                             ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY") 
+                            ?? configuration["OpenAI:ApiKey"] 
                             ?? string.Empty;
         }
 
