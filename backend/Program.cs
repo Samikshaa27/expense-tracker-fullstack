@@ -21,10 +21,10 @@ builder.Services.AddCors(options =>
             if (string.IsNullOrEmpty(origin)) return false;
 
             // Allow production URL
-            if (origin == "https://expense-tracker-fullstack-ten.vercel.app") return true;
+            if (origin == "https://monthlyexpensetracker.vercel.app") return true;
 
             // Allow all Vercel preview deployment URLs for this project
-            if (origin.StartsWith("https://expense-tracker-fullstack") && origin.EndsWith(".vercel.app")) return true;
+            if (origin.StartsWith("https://monthlyexpensetracker") && origin.EndsWith(".vercel.app")) return true;
 
             return false;
         })
