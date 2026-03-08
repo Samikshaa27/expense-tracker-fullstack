@@ -23,7 +23,11 @@ namespace ExpenseTrackerAPI.Controllers
         {
             _context = context;
             _httpClient = httpClient;
-            _openAiApiKey = configuration["OpenAI:ApiKey"] ?? string.Empty;
+            // Check config first, then various environment variable names
+            _openAiApiKey = configuration["OpenAI:ApiKey"] 
+                            ?? Environment.GetEnvironmentVariable("GEMINI_API_KEY") 
+                            ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY") 
+                            ?? string.Empty;
         }
 
         [HttpGet("financial-coach")]
@@ -78,9 +82,9 @@ namespace ExpenseTrackerAPI.Controllers
             {
                 if (isChat)
                 {
-                    return "AI is not configured. Please add your API key to appsettings.json. As a fallback: I see your question, but I need an API key to provide a real answer!";
+                    return "AI is not configured. Please add your API key to environment variables (GEMINI_API_KEY or OPENAI_API_KEY).";
                 }
-                return "AI is not configured. Please add your OpenAI API Key to appsettings.json to see real AI responses. Dummy advice: Keep tracking your expenses and stick to your budget!";
+                return "AI is not configured. Please add your API key to environment variables (GEMINI_API_KEY or OPENAI_API_KEY). Dummy advice: Keep tracking your expenses and stick to your budget!";
             }
 
             if (_openAiApiKey.StartsWith("AIza"))
@@ -97,7 +101,8 @@ namespace ExpenseTrackerAPI.Controllers
                     }
                 };
 
-                var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={_openAiApiKey}");
+                // Using gemini-1.5-flash as it is the most stable and widely available model
+                var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={_openAiApiKey}");
                 requestMessage.Content = new StringContent(JsonSerializer.Serialize(geminiRequest), Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.SendAsync(requestMessage);
@@ -105,7 +110,7 @@ namespace ExpenseTrackerAPI.Controllers
                 {
                     var error = await response.Content.ReadAsStringAsync();
                     Console.WriteLine($"Gemini API Error: {error}");
-                    return "Sorry, I couldn't generate a response at this time due to an API error.";
+                    return $"Sorry, I couldn't generate a response at this time due to an API error (Status: {response.StatusCode}).";
                 }
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -147,7 +152,7 @@ namespace ExpenseTrackerAPI.Controllers
                 {
                     var error = await response.Content.ReadAsStringAsync();
                     Console.WriteLine($"OpenAI API Error: {error}");
-                    return "Sorry, I couldn't generate a response at this time due to an API error.";
+                    return $"Sorry, I couldn't generate a response at this time due to an API error (Status: {response.StatusCode}).";
                 }
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
