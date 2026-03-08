@@ -101,8 +101,8 @@ namespace ExpenseTrackerAPI.Controllers
                     }
                 };
 
-                // Using gemini-1.5-flash as it is the most stable and widely available model
-                var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={_openAiApiKey}");
+                // Using gemini-2.5-flash as it is the most stable and widely available model for 2026
+                var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={_openAiApiKey}");
                 requestMessage.Content = new StringContent(JsonSerializer.Serialize(geminiRequest), Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.SendAsync(requestMessage);
