@@ -46,7 +46,14 @@ namespace ExpenseTrackerAPI.Controllers
                 .Select(g => g.Key)
                 .FirstOrDefault() ?? "None";
 
-            string prompt = $"Analyze the following user spending data and provide short financial advice.\n\nTotal spent: {total}\nTop category: {topCategory}\nTransactions: {count}\n\nProvide 2-3 short suggestions to help the user manage their budget.";
+            var transactionDetails = string.Join("\n", expenses.Select(e => $"- {e.Date:yyyy-MM-dd}: {e.Title} - {e.Amount:F2} ({e.Category})"));
+
+            string prompt = $"Analyze the following user spending data and provide short financial advice.\n\n" +
+                            $"Total spent: {total}\n" +
+                            $"Top category: {topCategory}\n" +
+                            $"Transactions: {count}\n\n" +
+                            $"Transactions:\n{transactionDetails}\n\n" +
+                            $"Provide 2-3 short suggestions to help the user manage their budget.";
 
             string advice = await GetAiResponse(prompt);
 
@@ -69,7 +76,15 @@ namespace ExpenseTrackerAPI.Controllers
                 .Select(g => g.Key)
                 .FirstOrDefault() ?? "None";
 
-            string prompt = $"User question: {request.Message}\n\nUser spending data:\nTotal spent: {total}\nTop category: {topCategory}\nTransactions: {count}\n\nAnswer the user's question based on this data.";
+            var transactionDetails = string.Join("\n", expenses.Select(e => $"- {e.Date:yyyy-MM-dd}: {e.Title} - {e.Amount:F2} ({e.Category})"));
+
+            string prompt = $"User question: {request.Message}\n\n" +
+                            $"User spending data:\n" +
+                            $"Total spent: {total}\n" +
+                            $"Top category: {topCategory}\n" +
+                            $"Transactions count: {count}\n\n" +
+                            $"Transaction Details:\n{transactionDetails}\n\n" +
+                            $"Answer the user's question based on this data.";
 
             string reply = await GetAiResponse(prompt, true);
 
